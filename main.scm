@@ -93,19 +93,24 @@
 		   (loop (+ x 1)(+ n 1))))
 		(else (loop (+ x 1) n))))))
 
+;;数字の場合はそのまま、(縦 横)のリストで来たら座標を計算するようにした。
 (define (input)
   (let loop ()
-	(display "\n> ")(flush)
-	(let ((pos (read)))
-	  (cond
-		((eq? pos 'pass)#t)
-		(else 
-		  (if (and (<= pos 63) (eq? (board-ref pos) 'empty))
-			(board-set! pos 'black)
-			(begin
-			  (display "Error")
-			  (loop)))
-		  (jadge? 'black pos))))))
+    (display "\n> ")(flush)
+    (let ((pos (read)))
+      (cond
+       ((eq? pos 'pass)#t)
+       (else
+        (if (pair? pos)
+            (set! pos (+
+                       (* (- (car pos) 1) 8)
+                       (- (cadr pos) 1))))
+        (if (and (<= pos 63) (eq? (board-ref pos) 'empty))
+            (board-set! pos 'black)
+            (begin
+              (display "Error")
+              (loop)))
+        (jadge? 'black pos))))))
 
 (define (computer)
   (let* ((lst (filter-map (lambda(x)(computer-do x)) '(1 7 8 9)))
